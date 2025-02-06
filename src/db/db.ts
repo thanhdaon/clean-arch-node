@@ -8,3 +8,5 @@ export const db = drizzle({
   client: mysql.createPool({ uri: env.DB_URL }),
   schema,
 });
+
+export type DB = typeof db;

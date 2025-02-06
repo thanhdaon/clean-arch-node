@@ -9,7 +9,7 @@ export type User = {
 };
 
 type UserInit = {
-  uuid: string;
+  uuid?: string;
   role: UserRole;
 };
 
@@ -18,23 +18,23 @@ type Dependencies = {
 };
 
 export function buildMakeUser({ Id }: Dependencies) {
-  return function makeUser(data: UserInit): User {
-    if (data.uuid === "") {
-      data.uuid = Id.newId();
+  return function makeUser({ uuid, role }: UserInit): User {
+    if (uuid === undefined || uuid === "") {
+      uuid = Id.newId();
     }
 
     return {
       getUuid: () => {
-        return data.uuid;
+        return uuid;
       },
       getRole: () => {
-        return data.role;
+        return role;
       },
-      changeRole: (role: UserRole) => {
-        if (data.role === role) {
+      changeRole: (newRole: UserRole) => {
+        if (role === newRole) {
           return;
         }
-        data.role = role;
+        role = newRole;
       },
     };
   };
