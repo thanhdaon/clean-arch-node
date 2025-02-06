@@ -1,41 +1,79 @@
-import { describe, it, expect } from "vitest";
-import { makeTask, type Status } from "~/domain/task/task";
+import { describe, it, expect, vi } from "vitest";
+import { buildMakeTask } from "~/domain/task/task";
+import type { ID } from "~/domain/id/id";
+import type { User } from "~/domain/user/user";
 
-const sampleTaskData = {
-  uuid: "123e4567-e89b-12d3-a456-426614174000",
-  title: "Test Task",
-  status: "todo" as Status,
-  createdBy: "user1",
-  assignedTo: "user2",
-  createdAt: new Date("2024-02-06T12:00:00Z"),
-  updatedAt: new Date("2024-02-07T12:00:00Z"),
+const mockId: ID = {
+  newId: vi.fn(() => "mocked-task-uuid"),
+  isValidId: vi.fn((id: string) => id.length > 0),
 };
 
-describe("makeTask", () => {
-  it("should create a task with correct properties", () => {
-    const task = makeTask(sampleTaskData);
+describe("domain/Task", () => {
+  const makeTask = buildMakeTask({ Id: mockId });
 
-    expect(task.getUuid()).toBe(sampleTaskData.uuid);
-    expect(task.getTitle()).toBe(sampleTaskData.title);
-    expect(task.getStatus()).toBe(sampleTaskData.status);
-    expect(task.getCreatedBy()).toBe(sampleTaskData.createdBy);
-    expect(task.getAssignedTo()).toBe(sampleTaskData.assignedTo);
-    expect(task.getCreatedAt()).toEqual(sampleTaskData.createdAt);
-    expect(task.getUpdatedAt()).toEqual(sampleTaskData.updatedAt);
+  it("should create a task with a provided UUID", () => {
+    const task = makeTask({
+      uuid: "1234",
+      title: "Test Task",
+      status: "todo",
+      createdBy: "user123",
+      createdAt: new Date(),
+    });
+    expect(task.getUuid()).toBe("1234");
+    expect(task.getTitle()).toBe("Test Task");
+    expect(task.getStatus()).toBe("todo");
+    expect(task.getCreatedBy()).toBe("user123");
   });
 
-  it("should handle missing optional properties", () => {
-    const minimalTaskData = {
-      uuid: "456e7890-e12b-34d5-a678-910111213141",
-      title: "Minimal Task",
-      status: "pending" as Status,
-      createdBy: "user3",
-      createdAt: new Date("2024-02-06T15:00:00Z"),
+  it("should generate a UUID if none is provided", () => {
+    const task = makeTask({
+      uuid: "",
+      title: "Auto ID Task",
+      status: "pending",
+      createdBy: "user456",
+      createdAt: new Date(),
+    });
+    expect(task.getUuid()).toBe("mocked-task-uuid");
+  });
+
+  it("should allow changing the title", () => {
+    const task = makeTask({
+      uuid: "5678",
+      title: "Old Title",
+      status: "inprogress",
+      createdBy: "user789",
+      createdAt: new Date(),
+    });
+    task.changeTitle("New Title");
+    expect(task.getTitle()).toBe("New Title");
+  });
+
+  it("should allow changing the status", () => {
+    const task = makeTask({
+      uuid: "91011",
+      title: "Status Task",
+      status: "todo",
+      createdBy: "user999",
+      createdAt: new Date(),
+    });
+    task.changeStatue("done");
+    expect(task.getStatus()).toBe("done");
+  });
+
+  it("should assign the task to a user", () => {
+    const mockUser: User = {
+      getUuid: () => "user123",
+      getRole: () => "employee",
+      changeRole: () => {},
     };
-
-    const task = makeTask(minimalTaskData);
-
-    expect(task.getAssignedTo()).toBeUndefined();
-    expect(task.getUpdatedAt()).toBeUndefined();
+    const task = makeTask({
+      uuid: "121314",
+      title: "Assign Task",
+      status: "todo",
+      createdBy: "user555",
+      createdAt: new Date(),
+    });
+    task.assignTo(mockUser);
+    expect(task.getAssignedTo()).toBe("user123");
   });
 });

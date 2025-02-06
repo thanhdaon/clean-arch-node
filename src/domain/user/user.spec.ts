@@ -1,28 +1,36 @@
-import { describe, it, expect } from "vitest";
-import { makeUser } from "~/domain/user/user";
+import { describe, it, expect, vi } from "vitest";
+import { buildMakeUser } from "~/domain/user/user";
+import type { ID } from "~/domain/id/id";
 
-describe("makeUser", () => {
-  it("should create a user with valid uuid and role", () => {
+const mockId: ID = {
+  newId: vi.fn(() => "mocked-uuid"),
+  isValidId: vi.fn((id: string) => true),
+};
+
+describe("domain/User", () => {
+  const makeUser = buildMakeUser({ Id: mockId });
+
+  it("should create a user with a provided UUID", () => {
     const user = makeUser({ uuid: "1234", role: "employee" });
     expect(user.getUuid()).toBe("1234");
     expect(user.getRole()).toBe("employee");
   });
 
-  it("should throw an error when uuid is empty", () => {
-    expect(() => makeUser({ uuid: "", role: "employer" })).toThrow(
-      "missing user uuid"
-    );
+  it("should generate a UUID if none is provided", () => {
+    const user = makeUser({ uuid: "", role: "employer" });
+    expect(user.getUuid()).toBe("mocked-uuid");
+    expect(user.getRole()).toBe("employer");
   });
 
-  it("should change the role when a new role is provided", () => {
-    const user = makeUser({ uuid: "5678", role: "employee" });
+  it("should change the role when changeRole is called", () => {
+    const user = makeUser({ uuid: "1234", role: "employee" });
     user.changeRole("employer");
     expect(user.getRole()).toBe("employer");
   });
 
-  it("should not change the role if the new role is the same as the current role", () => {
-    const user = makeUser({ uuid: "9012", role: "employer" });
-    user.changeRole("employer");
-    expect(user.getRole()).toBe("employer");
+  it("should not change the role if it is the same", () => {
+    const user = makeUser({ uuid: "1234", role: "employee" });
+    user.changeRole("employee");
+    expect(user.getRole()).toBe("employee");
   });
 });

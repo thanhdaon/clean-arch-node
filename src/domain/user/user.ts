@@ -1,29 +1,41 @@
+import type { ID } from "~/domain/id/id";
+
 export type UserRole = "employee" | "employer";
+
+export type User = {
+  getUuid: () => string;
+  getRole: () => UserRole;
+  changeRole: (role: UserRole) => void;
+};
 
 type UserInit = {
   uuid: string;
   role: UserRole;
 };
 
-export function makeUser(init: UserInit) {
-  if (init.uuid === "") {
-    throw new Error("missing user uuid");
-  }
+type Dependencies = {
+  Id: ID;
+};
 
-  return {
-    getUuid: () => {
-      return init.uuid;
-    },
-    getRole: () => {
-      return init.role;
-    },
-    changeRole: (role: UserRole) => {
-      if (init.role === role) {
-        return;
-      }
-      init.role = role;
-    },
+export function buildMakeUser({ Id }: Dependencies) {
+  return function makeUser(data: UserInit): User {
+    if (data.uuid === "") {
+      data.uuid = Id.newId();
+    }
+
+    return {
+      getUuid: () => {
+        return data.uuid;
+      },
+      getRole: () => {
+        return data.role;
+      },
+      changeRole: (role: UserRole) => {
+        if (data.role === role) {
+          return;
+        }
+        data.role = role;
+      },
+    };
   };
 }
-
-export type User = ReturnType<typeof makeUser>;
