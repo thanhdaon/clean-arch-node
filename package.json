@@ -1,0 +1,40 @@
+{
+  "name": "clean-arch-node",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx --env-file=.env src/index.ts",
+    "db:seed": "tsx --env-file=.env src/db/seed.ts",
+    "db:migrate": "drizzle-kit migrate --config=src/db/drizzle.config.ts",
+    "db:generate": "drizzle-kit generate --config=src/db/drizzle.config.ts",
+    "db:studio": "drizzle-kit studio --config=src/db/drizzle.config.ts",
+    "db:push": "drizzle-kit push --config=src/db/drizzle.config.ts",
+    "test": "NODE_ENV=test vitest run"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.8",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.57.1",
+    "@opentelemetry/instrumentation-http": "^0.57.1",
+    "@opentelemetry/instrumentation-mysql2": "^0.45.1",
+    "@opentelemetry/resources": "^1.30.1",
+    "@opentelemetry/sdk-node": "^0.57.1",
+    "@opentelemetry/semantic-conventions": "^1.28.0",
+    "@t3-oss/env-core": "^0.12.0",
+    "drizzle-orm": "^0.39.1",
+    "hono": "^4.6.20",
+    "hono-pino": "^0.7.0",
+    "mysql2": "^3.12.0",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "drizzle-kit": "^0.30.4",
+    "drizzle-seed": "^0.3.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}
