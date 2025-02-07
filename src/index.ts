@@ -7,6 +7,7 @@ import { makeCommandAddUser } from "~/app/command/add-user";
 import { makeQueryAllUsers } from "~/app/query/all-users";
 import { log } from "~/common/logger";
 import { runHttpServer } from "~/ports/http/server";
+import { makeCommandCreateTask } from "~/app/command/create-task";
 
 async function main() {
   const userRepository = makeUserRepository();
@@ -15,6 +16,7 @@ async function main() {
   const app: App = {
     command: {
       addUser: makeCommandAddUser({ users: userRepository }),
+      createTask: makeCommandCreateTask({ tasks: taskRepository }),
     },
     query: {
       allUsers: makeQueryAllUsers({ users: userRepository }),

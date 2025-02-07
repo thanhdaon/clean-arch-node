@@ -8,6 +8,7 @@ import { instrumentation, logger } from "~/ports/http/middlewares";
 import type { AppBindings } from "~/ports/http/types";
 
 import * as commandAddUser from "~/ports/http/handlers/command-add-user";
+import * as commandCreateTask from "~/ports/http/handlers/command-create-task";
 import * as queryAllUsers from "~/ports/http/handlers/query-all-users";
 
 export function runHttpServer(app: App) {
@@ -34,6 +35,7 @@ export function runHttpServer(app: App) {
   router.get("/doc", swaggerUI({ url: "/api/openapi-json" }));
 
   router.openapi(commandAddUser.route, commandAddUser.makeHandler(app));
+  router.openapi(commandCreateTask.route, commandCreateTask.makeHandler(app));
   router.openapi(queryAllUsers.route, queryAllUsers.makeHandler(app));
 
   serve({ fetch: router.fetch, port: 8001 }, (info) => {

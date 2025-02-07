@@ -1,5 +1,4 @@
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
 import { MySQL2Instrumentation } from "@opentelemetry/instrumentation-mysql2";
 import { Resource } from "@opentelemetry/resources";
 import { NodeSDK } from "@opentelemetry/sdk-node";
@@ -21,7 +20,7 @@ const resource = new Resource({
 const sdk = new NodeSDK({
   resource,
   traceExporter: otlpExporter,
-  instrumentations: [new MySQL2Instrumentation(), new HttpInstrumentation()],
+  instrumentations: [new MySQL2Instrumentation()],
 });
 
 sdk.start();
