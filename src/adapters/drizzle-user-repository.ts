@@ -1,10 +1,9 @@
 import { eq } from "drizzle-orm";
-import type { UserRepository } from "~/app/command/adapters";
+import type { User as QueryUser } from "~/app/query/types";
 import { db } from "~/db/db";
 import { users } from "~/db/schema";
 import { makeUser } from "~/domain/user";
 import type { User } from "~/domain/user/user";
-import type { User as QueryUser } from "~/app/query/types";
 
 async function allUsers(): Promise<QueryUser[]> {
   const dbUsers = await db.query.users.findMany();
@@ -30,7 +29,24 @@ async function findById(id: string) {
   return makeUser({ uuid: dbUser.id, role: dbUser.role });
 }
 
-async function updateById(id: string, updateFn: (u: User) => User) {}
+async function updateById(id: string, updateFn: (u: User) => User) {
+  await db.transaction(async (tx) => {
+    const found = await tx.query.users.findFirst({
+      where: (fields, { eq }) => eq(fields.id, id),
+    });
+
+    if (found === undefined) {
+      throw new Error(`user ${id} not found`);
+    }
+
+    const domainUser = makeUser({ uuid: found.id, role: found.role });
+    const domainUserUpdated = updateFn(domainUser);
+
+    await tx.update(users).set({
+      role: domainUserUpdated.getRole(),
+    });
+  });
+}
 
 export function makeUserRepository() {
   return Object.freeze({ allUsers, add, findById, updateById });
