@@ -1,27 +1,25 @@
-import { reset } from "drizzle-seed";
-import { beforeEach, describe, expect, it } from "vitest";
+import { eq, inArray } from "drizzle-orm";
+import { describe, expect, it } from "vitest";
+import { makeUserRepository } from "~/adapters/drizzle-user-repository";
 import { db } from "~/db/db";
 import { users } from "~/db/schema";
-import { makeUserRepository } from "~/adapters/drizzle-user-repository";
+import { Id } from "~/domain/id";
 import { makeUser } from "~/domain/user";
-import { eq } from "drizzle-orm";
-
-beforeEach(async () => {
-  await reset(db, { users });
-});
 
 const userRepository = makeUserRepository();
 
 describe("allUsers", () => {
   it("should return all users", async () => {
-    const insertedIds = await db
+    const insertedResults = await db
       .insert(users)
       .values([
-        { id: "user1", role: "employee" },
-        { id: "user2", role: "employer" },
-        { id: "user3", role: "employer" },
+        { id: Id.newId(), role: "employee" },
+        { id: Id.newId(), role: "employer" },
+        { id: Id.newId(), role: "employer" },
       ])
       .$returningId();
+
+    const insertedIds = insertedResults.map((r) => r.id);
 
     const results = await userRepository.allUsers();
 
@@ -30,6 +28,8 @@ describe("allUsers", () => {
     });
 
     expect(allIncluded).toBe(true);
+
+    await db.delete(users).where(inArray(users.id, insertedIds));
   });
 });
 
@@ -48,20 +48,29 @@ describe("add", () => {
 
     expect(dbUser.id).toBe(user.getUuid());
     expect(dbUser.role).toBe(user.getRole());
+
+    await db.delete(users).where(eq(users.id, user.getUuid()));
   });
 });
 
 describe("findById", () => {
   it("should find a user by id", async () => {
-    await db.insert(users).values({ id: "test-id", role: "employer" });
-    const user = await userRepository.findById("test-id");
+    const insertedResults = await db
+      .insert(users)
+      .values({ id: Id.newId(), role: "employer" })
+      .$returningId();
+    const insertedIds = insertedResults.map((r) => r.id);
+
+    const user = await userRepository.findById(insertedIds[0]);
 
     if (user === undefined) {
       expect.fail(`user test-id not found`);
     }
 
-    expect(user.getUuid()).toBe("test-id");
+    expect(user.getUuid()).toBe(insertedIds[0]);
     expect(user.getRole()).toBe("employer");
+
+    await db.delete(users).where(inArray(users.id, insertedIds));
   });
 
   it("should return undefined if user is not found", async () => {
@@ -72,15 +81,19 @@ describe("findById", () => {
 
 describe("updateById", () => {
   it("should update user by id", async () => {
-    await db.insert(users).values({ id: "test-id", role: "employee" });
+    const insertedResults = await db
+      .insert(users)
+      .values({ id: Id.newId(), role: "employee" })
+      .$returningId();
+    const insertedIds = insertedResults.map((r) => r.id);
 
-    await userRepository.updateById("test-id", (user) => {
+    await userRepository.updateById(insertedIds[0], (user) => {
       user.changeRole("employer");
       return user;
     });
 
     const updatedUser = await db.query.users.findFirst({
-      where: eq(users.id, "test-id"),
+      where: eq(users.id, insertedIds[0]),
     });
 
     if (updatedUser === undefined) {
@@ -88,6 +101,8 @@ describe("updateById", () => {
     }
 
     expect(updatedUser.role).toBe("employer");
+
+    await db.delete(users).where(inArray(users.id, insertedIds));
   });
 
   it("should throw an error if updating a non-existent user", async () => {

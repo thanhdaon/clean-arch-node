@@ -45,7 +45,7 @@ describe("domain/Task", () => {
       createdAt: new Date(),
     });
     task.changeTitle("New Title");
-    expect(task.getTitle()).toBe("New Title");
+    expect(task.getTitle()).toEqual("New Title");
   });
 
   it("should allow changing the status", () => {

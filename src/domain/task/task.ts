@@ -22,9 +22,9 @@ type Dependencies = {
 };
 
 type TaskInit = {
-  uuid: string;
+  uuid?: string;
   title: string;
-  status: Status;
+  status: string;
   createdBy: string;
   assignedTo?: string;
   createdAt: Date;
@@ -32,61 +32,78 @@ type TaskInit = {
 };
 
 export function buildMakeTask({ Id }: Dependencies) {
-  function makeTask(data: TaskInit): Task {
-    if (data.uuid === "") {
-      data.uuid = Id.newId();
+  function isValidStatus(status: string) {
+    const options = ["todo", "inprogress", "done", "pending"];
+    return options.includes(status);
+  }
+
+  function makeTask({
+    uuid,
+    title,
+    status,
+    createdBy,
+    createdAt,
+    assignedTo,
+    updatedAt,
+  }: TaskInit): Task {
+    if (!isValidStatus(status)) {
+      throw new Error(`status ${status} is invalid`);
+    }
+
+    if (uuid === "" || uuid === undefined) {
+      uuid = Id.newId();
     }
 
     return {
       getUuid: () => {
-        return data.uuid;
+        return uuid;
       },
       getTitle: () => {
-        return data.title;
+        return title;
       },
       getStatus: () => {
-        return data.status;
+        return status as Status;
       },
       getCreatedBy: () => {
-        return data.createdBy;
+        return createdBy;
       },
       getAssignedTo: () => {
-        return data.assignedTo;
+        return assignedTo;
       },
       getCreatedAt: () => {
-        return data.createdAt;
+        return createdAt;
       },
       getUpdatedAt: () => {
-        return data.updatedAt;
+        return updatedAt;
       },
       isUpdateYet: () => {
-        return data.updatedAt !== undefined;
+        return updatedAt !== undefined;
       },
       assignTo: (user: User) => {
-        if (data.assignedTo === user.getUuid()) {
+        if (assignedTo === user.getUuid()) {
           throw new Error(
-            `task ${data.uuid} already assigned to user ${user.getUuid()}`
+            `task ${uuid} already assigned to user ${user.getUuid()}`
           );
         }
 
-        data.assignedTo = user.getUuid();
-        data.updatedAt = new Date();
+        assignedTo = user.getUuid();
+        updatedAt = new Date();
       },
-      changeStatue: (status: Status) => {
-        if (data.status === status) {
-          throw new Error(`task ${data.uuid} already in status ${status}`);
+      changeStatue: (newStatus: Status) => {
+        if (status === newStatus) {
+          throw new Error(`task ${uuid} already in status ${status}`);
         }
 
-        data.status = status;
-        data.updatedAt = new Date();
+        status = newStatus;
+        updatedAt = new Date();
       },
-      changeTitle: (title: string) => {
-        if (title.length === 0) {
+      changeTitle: (newTitle: string) => {
+        if (newTitle.length === 0) {
           throw new Error("task title can not be empty");
         }
 
-        data.title = title;
-        data.updatedAt = new Date();
+        title = newTitle;
+        updatedAt = new Date();
       },
     };
   }

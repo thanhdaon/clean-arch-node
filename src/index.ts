@@ -1,5 +1,6 @@
 import "~/common/instrumentation";
 
+import { makeTaskRepository } from "~/adapters/drizzle-task-repository";
 import { makeUserRepository } from "~/adapters/drizzle-user-repository";
 import type { App } from "~/app";
 import { makeCommandAddUser } from "~/app/command/add-user";
@@ -9,6 +10,7 @@ import { runHttpServer } from "~/ports/http/server";
 
 async function main() {
   const userRepository = makeUserRepository();
+  const taskRepository = makeTaskRepository();
 
   const app: App = {
     command: {
