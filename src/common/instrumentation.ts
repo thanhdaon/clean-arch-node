@@ -14,7 +14,7 @@ const otlpExporter = new OTLPTraceExporter({
 });
 
 const resource = new Resource({
-  [ATTR_SERVICE_NAME]: "clean-arch-node",
+  [ATTR_SERVICE_NAME]: env.SERVICE_NAME,
   [ATTR_SERVICE_VERSION]: "0.0.1",
 });
 

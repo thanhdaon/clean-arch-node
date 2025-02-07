@@ -18,11 +18,11 @@ export function responseCreated<T>(c: Context, data: T) {
 }
 
 export function responseOk<T>(c: Context, data: T) {
-  return c.json({ data }, OK);
+  return c.json({ data, traceId: c.get("trace-id") }, OK);
 }
 
 export function responseOkMessage(c: Context, message: string) {
-  return c.json({ code: OK, message }, OK);
+  return c.json({ message, traceId: c.get("trace-id") }, OK);
 }
 
 export function responseNotFound(c: Context, error: string) {

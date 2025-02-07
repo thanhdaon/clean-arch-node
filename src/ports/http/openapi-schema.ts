@@ -1,7 +1,10 @@
 import { z } from "@hono/zod-openapi";
 
 export function createDataSchema<T>(schema: z.ZodType<T>) {
-  return z.object({ data: schema });
+  return z.object({
+    data: schema,
+    traceId: z.string().openapi({ example: "some trace id" }),
+  });
 }
 
 export function createPaginationSchema<T>(schema: z.ZodType<T>) {
@@ -38,5 +41,8 @@ export const ErrorSchema = z
   .openapi("Error");
 
 export const MessageSchema = z
-  .object({ message: z.string().openapi({ example: "some message" }) })
+  .object({
+    message: z.string().openapi({ example: "some message" }),
+    traceId: z.string().openapi({ example: "some trace id" }),
+  })
   .openapi("Message");
