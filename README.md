@@ -23,7 +23,7 @@ Build a Task Management API with role-based access, enabling two types of users:
 
 ## Environtment
 
-- Golang 1.23.5
+- Nodejs v23.7.9
 - Docker, Docker Compose
 
 ## Setup
