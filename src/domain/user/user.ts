@@ -6,6 +6,7 @@ export type User = {
   getUuid: () => string;
   getRole: () => UserRole;
   changeRole: (role: UserRole) => void;
+  canAssignTask: () => boolean;
 };
 
 type UserInit = {
@@ -39,6 +40,9 @@ export function buildMakeUser({ Id }: Dependencies) {
           return;
         }
         role = newRole;
+      },
+      canAssignTask: () => {
+        return role === "employer";
       },
     };
   };
