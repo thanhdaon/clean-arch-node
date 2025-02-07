@@ -1,19 +1,27 @@
 import "~/common/instrumentation";
 
-import { startHttpServer } from "~/ports/http/server";
-import { log } from "./common/logger";
-import { makeUserRepository } from "~/adapters/drizzle-task-repository";
-import { makeCommandAddUser } from "./app/command/add-user";
+import { makeUserRepository } from "~/adapters/drizzle-user-repository";
+import type { App } from "~/app";
+import { makeCommandAddUser } from "~/app/command/add-user";
+import { makeQueryAllUsers } from "~/app/query/all-users";
+import { log } from "~/common/logger";
+import { runHttpServer } from "~/ports/http/server";
 
 async function main() {
   const userRepository = makeUserRepository();
-  startHttpServer();
+
+  const app: App = {
+    command: {
+      addUser: makeCommandAddUser({ users: userRepository }),
+    },
+    query: {
+      allUsers: makeQueryAllUsers({ users: userRepository }),
+    },
+  };
+
+  runHttpServer(app);
 }
 
-main()
-  .catch((error) => {
-    log.error(error);
-  })
-  .finally(() => {
-    process.exit(0);
-  });
+main().catch((error) => {
+  log.error(error);
+});

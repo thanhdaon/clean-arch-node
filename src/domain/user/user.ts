@@ -10,7 +10,7 @@ export type User = {
 
 type UserInit = {
   uuid?: string;
-  role: UserRole;
+  role: string;
 };
 
 type Dependencies = {
@@ -19,6 +19,10 @@ type Dependencies = {
 
 export function buildMakeUser({ Id }: Dependencies) {
   return function makeUser({ uuid, role }: UserInit): User {
+    if (role !== "employee" && role !== "employer") {
+      throw new Error(`invalid role ${role}`);
+    }
+
     if (uuid === undefined || uuid === "") {
       uuid = Id.newId();
     }
@@ -28,7 +32,7 @@ export function buildMakeUser({ Id }: Dependencies) {
         return uuid;
       },
       getRole: () => {
-        return role;
+        return role as UserRole;
       },
       changeRole: (newRole: UserRole) => {
         if (role === newRole) {

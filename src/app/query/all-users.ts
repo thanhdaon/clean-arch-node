@@ -1,11 +1,17 @@
 import type { User } from "~/app/query/types";
 
 interface AllUsersRealModel {
-  AllUsers(): User[];
+  allUsers(): Promise<User[]>;
 }
 
-export function makeQueryAllUsers(users: AllUsersRealModel) {
+interface Dependencies {
+  users: AllUsersRealModel;
+}
+
+export type QueryAllUsers = () => Promise<User[]>;
+
+export function makeQueryAllUsers({ users }: Dependencies): QueryAllUsers {
   return async function allUsers() {
-    return await users.AllUsers();
+    return await users.allUsers();
   };
 }

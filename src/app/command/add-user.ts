@@ -7,7 +7,7 @@ interface Dependencies {
 }
 
 interface AddUserInput {
-  role: UserRole;
+  role: string;
 }
 
 export type CommandAddUser = (input: AddUserInput) => Promise<void>;
