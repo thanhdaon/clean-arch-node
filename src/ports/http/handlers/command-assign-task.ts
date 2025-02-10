@@ -1,9 +1,11 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import type { App } from "~/app";
+import { log } from "~/common/logger";
+import { getUserFormContext } from "~/ports/http/auth";
 import { jsonContent } from "~/ports/http/openapi-json";
 import { ErrorSchema, MessageSchema } from "~/ports/http/openapi-schema";
-import { responseOkMessage } from "~/ports/http/response";
-import { BAD_REQUEST, OK } from "~/ports/http/status-codes";
+import { responseForbidden, responseOkMessage } from "~/ports/http/response";
+import { BAD_REQUEST, FORBIDDEN, OK } from "~/ports/http/status-codes";
 import type { AppRouteHandler } from "~/ports/http/types";
 
 const PathParamsSchema = z.object({
@@ -35,14 +37,20 @@ export const route = createRoute({
   responses: {
     [OK]: jsonContent(MessageSchema),
     [BAD_REQUEST]: jsonContent(ErrorSchema),
+    [FORBIDDEN]: jsonContent(ErrorSchema),
   },
 });
 
 export function makeHandler(app: App): AppRouteHandler<typeof route> {
   return async (c) => {
+    const assigner = getUserFormContext(c);
+    if (assigner === undefined) {
+      return responseForbidden(c);
+    }
     const params = c.req.valid("param");
 
     await app.command.assignTask({
+      assigner: assigner,
       taskId: params.taskId,
       assigneeId: params.assigneeId,
     });

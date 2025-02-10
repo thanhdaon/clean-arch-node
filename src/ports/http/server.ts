@@ -2,12 +2,15 @@ import { serve } from "@hono/node-server";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
+import { jwt } from "hono/jwt";
 import type { App } from "~/app";
+import { env } from "~/common/env";
 import { defaultHook, notFound, onError } from "~/ports/http/hooks";
 import { instrumentation, logger } from "~/ports/http/middlewares";
 import type { AppBindings } from "~/ports/http/types";
 
 import * as commandAddUser from "~/ports/http/handlers/command-add-user";
+import * as commandAssignTask from "~/ports/http/handlers/command-assign-task";
 import * as commandCreateTask from "~/ports/http/handlers/command-create-task";
 import * as queryAllUsers from "~/ports/http/handlers/query-all-users";
 
@@ -36,6 +39,7 @@ export function runHttpServer(app: App) {
 
   router.openapi(commandAddUser.route, commandAddUser.makeHandler(app));
   router.openapi(commandCreateTask.route, commandCreateTask.makeHandler(app));
+  router.openapi(commandAssignTask.route, commandAssignTask.makeHandler(app));
   router.openapi(queryAllUsers.route, queryAllUsers.makeHandler(app));
 
   serve({ fetch: router.fetch, port: 8001 }, (info) => {

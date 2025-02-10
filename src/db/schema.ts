@@ -8,8 +8,8 @@ export const users = mysqlTable("users", {
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
-  createdTasks: many(tasks),
-  assigningTasks: many(tasks),
+  createdTasks: many(tasks, { relationName: "createdTasks" }),
+  assigningTasks: many(tasks, { relationName: "assignedTasks" }),
 }));
 
 export const tasks = mysqlTable("tasks", {
@@ -32,9 +32,11 @@ export const tasksRelations = relations(tasks, ({ one }) => ({
   createdByUser: one(users, {
     fields: [tasks.createdBy],
     references: [users.id],
+    relationName: "createdTasks",
   }),
   assignedToUser: one(users, {
     fields: [tasks.assignedTo],
     references: [users.id],
+    relationName: "assignedTasks",
   }),
 }));

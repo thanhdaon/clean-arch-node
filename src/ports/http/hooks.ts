@@ -1,11 +1,8 @@
 import type { Hook } from "@hono/zod-openapi";
 import { type ErrorHandler, type NotFoundHandler } from "hono";
-import {
-  BAD_REQUEST,
-  INTERNAL_SERVER_ERROR,
-  NOT_FOUND,
-} from "~/ports/http/status-codes";
+import { BAD_REQUEST, NOT_FOUND } from "~/ports/http/status-codes";
 import { HttpStatusPhrases } from "~/ports/http/status-phrases";
+import { responseInternalError } from "~/ports/http/response";
 
 export const notFound: NotFoundHandler = (c) => {
   return c.json(
@@ -17,10 +14,7 @@ export const notFound: NotFoundHandler = (c) => {
 };
 
 export const onError: ErrorHandler = (err, c) => {
-  return c.json(
-    { error: err.message, code: INTERNAL_SERVER_ERROR },
-    INTERNAL_SERVER_ERROR
-  );
+  return responseInternalError(c, err);
 };
 
 export const defaultHook: Hook<any, any, any, any> = (result, c) => {

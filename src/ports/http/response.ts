@@ -3,6 +3,7 @@ import {
   BAD_REQUEST,
   CREATED,
   FORBIDDEN,
+  INTERNAL_SERVER_ERROR,
   NOT_FOUND,
   OK,
   UNAUTHORIZED,
@@ -40,5 +41,15 @@ export function responseForbidden(c: Context) {
   return c.json(
     { code: FORBIDDEN, error: HttpStatusPhrases.FORBIDDEN },
     FORBIDDEN
+  );
+}
+
+export function responseInternalError(c: Context, err: Error) {
+  return c.json(
+    {
+      error: err.message,
+      traceId: c.get("trace-id"),
+    },
+    INTERNAL_SERVER_ERROR
   );
 }

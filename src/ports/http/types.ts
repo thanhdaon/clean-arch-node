@@ -4,10 +4,14 @@ import {
   type RouteHandler,
   z,
 } from "@hono/zod-openapi";
+import type { Context } from "hono";
+import type { JwtVariables } from "hono/jwt";
 
 export interface AppBindings {
-  Variables: {};
+  Variables: JwtVariables;
 }
+
+export type AppContext = Context<AppBindings>;
 
 export type App = OpenAPIHono<AppBindings>;
 
