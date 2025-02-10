@@ -35,7 +35,7 @@ export const TaskSchema = z
 
 export const ErrorSchema = z
   .object({
-    code: z.number().openapi({ example: 400 }),
+    traceId: z.string().openapi({ example: "some trace id" }),
     error: z.string().openapi({ example: "error" }),
   })
   .openapi("Error");

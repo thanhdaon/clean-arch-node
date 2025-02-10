@@ -1,7 +1,7 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import type { App } from "~/app";
 import { log } from "~/common/logger";
-import { getUserFormContext } from "~/ports/http/auth";
+import { getUserFromCtx } from "~/ports/http/auth";
 import { jsonContent } from "~/ports/http/openapi-json";
 import { ErrorSchema, MessageSchema } from "~/ports/http/openapi-schema";
 import { responseForbidden, responseOkMessage } from "~/ports/http/response";
@@ -43,7 +43,7 @@ export const route = createRoute({
 
 export function makeHandler(app: App): AppRouteHandler<typeof route> {
   return async (c) => {
-    const assigner = getUserFormContext(c);
+    const assigner = getUserFromCtx(c);
     if (assigner === undefined) {
       return responseForbidden(c);
     }

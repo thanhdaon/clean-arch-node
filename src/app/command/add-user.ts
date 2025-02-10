@@ -12,8 +12,10 @@ interface AddUserInput {
 export type CommandAddUser = (input: AddUserInput) => Promise<void>;
 
 export function makeCommandAddUser({ users }: Dependencies): CommandAddUser {
-  return async function addUser({ role }: AddUserInput) {
+  async function addUser({ role }: AddUserInput) {
     const newUser = makeUser({ role });
     await users.add(newUser);
-  };
+  }
+
+  return addUser;
 }

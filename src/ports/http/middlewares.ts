@@ -32,7 +32,6 @@ export const instrumentation: MiddlewareHandler = async (c, next) => {
   await context.with(trace.setSpan(extractedContext, span), async () => {
     await next();
   });
-
   span.end();
 };
 

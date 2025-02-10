@@ -11,11 +11,11 @@ import {
 import { HttpStatusPhrases } from "~/ports/http/status-phrases";
 
 export function responseBadRequest(c: Context, error: string) {
-  return c.json({ code: BAD_REQUEST, error }, BAD_REQUEST);
+  return c.json({ traceId: c.get("trace-id"), error }, BAD_REQUEST);
 }
 
 export function responseCreated<T>(c: Context, data: T) {
-  return c.json({ code: CREATED, data }, CREATED);
+  return c.json({ code: CREATED, data, traceId: c.get("trace-id") }, CREATED);
 }
 
 export function responseOk<T>(c: Context, data: T) {
@@ -27,19 +27,19 @@ export function responseOkMessage(c: Context, message: string) {
 }
 
 export function responseNotFound(c: Context, error: string) {
-  return c.json({ code: NOT_FOUND, error }, NOT_FOUND);
+  return c.json({ traceId: c.get("trace-id"), error }, NOT_FOUND);
 }
 
 export function responseUnthenticated(c: Context) {
   return c.json(
-    { code: UNAUTHORIZED, error: HttpStatusPhrases.UNAUTHORIZED },
+    { traceId: c.get("trace-id"), error: HttpStatusPhrases.UNAUTHORIZED },
     UNAUTHORIZED
   );
 }
 
 export function responseForbidden(c: Context) {
   return c.json(
-    { code: FORBIDDEN, error: HttpStatusPhrases.FORBIDDEN },
+    { traceId: c.get("trace-id"), error: HttpStatusPhrases.FORBIDDEN },
     FORBIDDEN
   );
 }
