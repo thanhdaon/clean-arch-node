@@ -56,6 +56,7 @@ export const logger: MiddlewareHandler = pinoLogger({
     onResBindings: (c) => ({
       res: {
         status: c.res.status,
+        traceId: c.get("trace-id"),
       },
     }),
   },
