@@ -111,3 +111,27 @@ describe("updateById", () => {
     ).rejects.toThrow("user non-existent-id not found");
   });
 });
+
+describe("deleteById", () => {
+  it("should delete a user by id", async () => {
+    const insertedResults = await db
+      .insert(users)
+      .values({ id: Id.newId(), role: "employee" })
+      .$returningId();
+    const insertedIds = insertedResults.map((r) => r.id);
+
+    await userRepository.deleteById(insertedIds[0]);
+
+    const deletedUser = await db.query.users.findFirst({
+      where: eq(users.id, insertedIds[0]),
+    });
+
+    expect(deletedUser).toBeUndefined();
+
+    await db.delete(users).where(inArray(users.id, insertedIds));
+  });
+
+  it("should not throw error when deleting non-existent user", async () => {
+    await expect(userRepository.deleteById("non-existent-id")).resolves.not.toThrow();
+  });
+});

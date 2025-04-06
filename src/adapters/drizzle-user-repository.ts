@@ -48,6 +48,10 @@ async function updateById(id: string, updateFn: (u: User) => User) {
   });
 }
 
+async function deleteById(id: string) {
+  await db.delete(users).where(eq(users.id, id));
+}
+
 export function makeUserRepository() {
-  return Object.freeze({ allUsers, add, findById, updateById });
+  return Object.freeze({ allUsers, add, findById, updateById, deleteById });
 }

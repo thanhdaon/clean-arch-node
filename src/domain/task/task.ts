@@ -1,7 +1,7 @@
 import type { User } from "~/domain/user/user";
 import type { ID } from "~/domain/id/id";
 
-export type Status = "todo" | "inprogress" | "done" | "pending";
+export type Status = "todo" | "inprogress" | "done" | "pending" | "rejected";
 
 export type Task = {
   getUuid: () => string;
@@ -33,8 +33,12 @@ type TaskInit = {
 
 export function buildMakeTask({ Id }: Dependencies) {
   function isValidStatus(status: string) {
-    const options = ["todo", "inprogress", "done", "pending"];
+    const options = ["todo", "inprogress", "done", "pending", "rejected"];
     return options.includes(status);
+  }
+
+  function isValidTitle(title: string) {
+    return title.length > 0 && title.length <= 200;
   }
 
   function makeTask({
@@ -48,6 +52,10 @@ export function buildMakeTask({ Id }: Dependencies) {
   }: TaskInit): Task {
     if (!isValidStatus(status)) {
       throw new Error(`status ${status} is invalid`);
+    }
+
+    if (!isValidTitle(title)) {
+      throw new Error("task title cannot exceed 200 characters");
     }
 
     if (uuid === "" || uuid === undefined) {
@@ -100,6 +108,10 @@ export function buildMakeTask({ Id }: Dependencies) {
       changeTitle: (newTitle: string) => {
         if (newTitle.length === 0) {
           throw new Error("task title can not be empty");
+        }
+
+        if (!isValidTitle(newTitle)) {
+          throw new Error("task title cannot exceed 200 characters");
         }
 
         title = newTitle;

@@ -48,6 +48,30 @@ describe("domain/Task", () => {
     expect(task.getTitle()).toEqual("New Title");
   });
 
+  it("should throw error when title exceeds 200 characters", () => {
+    const longTitle = "a".repeat(201);
+    expect(() =>
+      makeTask({
+        uuid: "5678",
+        title: longTitle,
+        status: "todo",
+        createdBy: "user789",
+        createdAt: new Date(),
+      })
+    ).toThrow("task title cannot exceed 200 characters");
+
+    const task = makeTask({
+      uuid: "5678",
+      title: "Valid Title",
+      status: "todo",
+      createdBy: "user789",
+      createdAt: new Date(),
+    });
+    expect(() => task.changeTitle(longTitle)).toThrow(
+      "task title cannot exceed 200 characters"
+    );
+  });
+
   it("should allow changing the status", () => {
     const task = makeTask({
       uuid: "91011",
@@ -65,6 +89,7 @@ describe("domain/Task", () => {
       getUuid: () => "user123",
       getRole: () => "employee",
       changeRole: () => {},
+      canAssignTask: () => true,
     };
     const task = makeTask({
       uuid: "121314",
