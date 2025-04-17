@@ -1,12 +1,9 @@
 import { drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import { env } from "~/common/env";
-import * as schema from "~/db/schema";
+import { relations } from "~/db/relations";
 
-export const db = drizzle({
-  mode: "default",
-  client: mysql.createPool({ uri: env.DB_URL }),
-  schema,
-});
+const client = mysql.createPool({ uri: env.DB_URL });
 
+export const db = drizzle(client, { mode: "default", relations });
 export type DB = typeof db;

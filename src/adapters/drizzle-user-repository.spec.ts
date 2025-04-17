@@ -39,7 +39,7 @@ describe("add", () => {
     await userRepository.add(user);
 
     const dbUser = await db.query.users.findFirst({
-      where: eq(users.id, user.getUuid()),
+      where: { id: user.getUuid() },
     });
 
     if (dbUser === undefined) {
@@ -93,7 +93,7 @@ describe("updateById", () => {
     });
 
     const updatedUser = await db.query.users.findFirst({
-      where: eq(users.id, insertedIds[0]),
+      where: { id: insertedIds[0] },
     });
 
     if (updatedUser === undefined) {
@@ -123,7 +123,7 @@ describe("deleteById", () => {
     await userRepository.deleteById(insertedIds[0]);
 
     const deletedUser = await db.query.users.findFirst({
-      where: eq(users.id, insertedIds[0]),
+      where: { id: insertedIds[0] },
     });
 
     expect(deletedUser).toBeUndefined();

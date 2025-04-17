@@ -18,7 +18,7 @@ async function add(task: Task) {
 async function updateById(id: string, updateFn: (u: Task) => Task) {
   await db.transaction(async (tx) => {
     const found = await tx.query.tasks.findFirst({
-      where: (fields, { eq }) => eq(fields.id, id),
+      where: { id },
     });
 
     if (found === undefined) {

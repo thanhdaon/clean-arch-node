@@ -26,7 +26,7 @@ describe("add", () => {
     await taskRepository.add(task);
 
     const dbTask = await db.query.tasks.findFirst({
-      where: (fields, { eq }) => eq(fields.id, task.getUuid()),
+      where: { id: task.getUuid() },
     });
 
     if (dbTask === undefined) {
@@ -71,7 +71,7 @@ describe("updateById function", () => {
     });
 
     const updatedTask = await db.query.tasks.findFirst({
-      where: eq(tasks.id, taskId),
+      where: { id: taskId },
     });
 
     if (updatedTask === undefined) {

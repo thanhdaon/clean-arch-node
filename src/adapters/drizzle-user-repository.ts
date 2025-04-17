@@ -19,7 +19,7 @@ async function add(user: User) {
 
 async function findById(id: string) {
   const dbUser = await db.query.users.findFirst({
-    where: eq(users.id, id),
+    where: { id },
   });
 
   if (dbUser === undefined) {
@@ -32,7 +32,7 @@ async function findById(id: string) {
 async function updateById(id: string, updateFn: (u: User) => User) {
   await db.transaction(async (tx) => {
     const found = await tx.query.users.findFirst({
-      where: (fields, { eq }) => eq(fields.id, id),
+      where: { id },
     });
 
     if (found === undefined) {
