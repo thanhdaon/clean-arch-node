@@ -3,9 +3,9 @@ import { z } from "zod";
 import type { App } from "~/app";
 import { jsonContent, jsonContentRequired } from "~/ports/http/openapi-json";
 import { ErrorSchema, MessageSchema } from "~/ports/http/openapi-schema";
+import { responseOkMessage } from "~/ports/http/response";
 import { BAD_REQUEST, OK } from "~/ports/http/status-codes";
 import type { AppRouteHandler } from "~/ports/http/types";
-import { responseOkMessage } from "~/ports/http/response";
 
 const BodySchema = z.object({
   role: z.enum(["employee", "employer"]),

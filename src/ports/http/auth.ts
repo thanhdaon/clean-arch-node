@@ -19,4 +19,4 @@ function _getUserFromCtx(c: AppContext): User | undefined {
   return makeUser({ uuid: decoded.userUuid, role: decoded.userRole });
 }
 
-export const getUserFromCtx = withTrace(_getUserFromCtx, "userFromCtx");
+export const getUserFromCtx = withTrace(_getUserFromCtx, "user-from-ctx");
