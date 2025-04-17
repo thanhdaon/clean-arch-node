@@ -18,7 +18,7 @@ async function main() {
 
   const insertUserIDs = insertUsers.map((user) => user.id);
 
-  await db.insert(tasks).values(generateTasks(10, insertUserIDs));
+  await db.insert(tasks).values(generateTasks(100, insertUserIDs));
 }
 
 function generateUsers(count: number): User[] {
@@ -28,7 +28,7 @@ function generateUsers(count: number): User[] {
   }));
 }
 
-function generateTasks(count: number, userIDs: string[]) {
+function generateTasks(count: number, userIDs: string[]): Task[] {
   return Array.from({ length: count }, () => ({
     id: Id.newId(),
     title: faker.company.catchPhrase(),
@@ -48,10 +48,10 @@ function generateTasks(count: number, userIDs: string[]) {
 
 main()
   .then(() => {
-    console.log("Seed success!");
+    console.log("🌱 Seed success! ✨");
   })
   .catch((error) => {
-    console.error("Seed failed:", error);
+    console.error("🚫 Seed failed:", error);
   })
   .finally(() => {
     process.exit(0);
