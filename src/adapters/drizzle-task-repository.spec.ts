@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { makeTaskRepository } from "~/adapters/drizzle-task-repository";
 import { db } from "~/db/db";
-import { tasks, users } from "~/db/schema";
+import { tasks, users } from "~/db/schema/others";
 import { Id } from "~/domain/id";
 import { makeTask } from "~/domain/task";
 

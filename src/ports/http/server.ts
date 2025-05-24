@@ -3,6 +3,7 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
 import type { App } from "~/app";
+import { auth } from "~/common/auth";
 import { defaultHook, notFound, onError } from "~/ports/http/hooks";
 import { instrumentation, logger } from "~/ports/http/middlewares";
 import type { AppBindings } from "~/ports/http/types";

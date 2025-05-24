@@ -9,6 +9,7 @@
     "db:generate": "drizzle-kit generate --config=src/db/drizzle.config.ts",
     "db:studio": "drizzle-kit studio --config=src/db/drizzle.config.ts",
     "db:push": "drizzle-kit push --config=src/db/drizzle.config.ts",
+    "auth:schema-generate": "npx @better-auth/cli generate --config=src/common/auth.ts --output=src/db/schema/auth.ts",
     "test": "NODE_ENV=test vitest run"
   },
   "dependencies": {
@@ -35,6 +36,7 @@
     "zod": "^3.25.28"
   },
   "devDependencies": {
+    "@better-auth/cli": "^1.2.8",
     "@faker-js/faker": "^9.8.0",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/lodash": "^4.17.17",

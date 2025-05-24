@@ -1,20 +1,23 @@
 import { defineRelations } from "drizzle-orm";
-import * as schema from "~/db/schema";
+import * as otherSchema from "~/db/schema/others";
+import * as authschema from "~/db/schema/auth";
+
+const schema = { ...otherSchema, ...authschema };
 
 export const relations = defineRelations(schema, (r) => ({
-  users: {
-    createdTasks: r.many.tasks({ alias: "createdByUser" }),
-    assigningTasks: r.many.tasks({ alias: "assignedToUser" }),
+  user: {
+    createdTasks: r.many.task({ alias: "createdByUser" }),
+    assigningTasks: r.many.task({ alias: "assignedToUser" }),
   },
-  tasks: {
-    createdByUser: r.one.users({
-      from: r.tasks.createdBy,
-      to: r.users.id,
+  task: {
+    createdByUser: r.one.user({
+      from: r.task.createdBy,
+      to: r.user.id,
       alias: "createdByUser",
     }),
-    assignedToUser: r.one.users({
-      from: r.tasks.assignedTo,
-      to: r.users.id,
+    assignedToUser: r.one.user({
+      from: r.task.assignedTo,
+      to: r.user.id,
       alias: "assignedToUser",
     }),
   },

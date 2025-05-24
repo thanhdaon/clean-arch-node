@@ -1,24 +1,24 @@
 import { eq } from "drizzle-orm";
 import type { User as QueryUser } from "~/app/query/types";
 import { db } from "~/db/db";
-import { users } from "~/db/schema";
+import { user } from "~/db/schema/auth";
 import { makeUser } from "~/domain/user";
 import type { User } from "~/domain/user/user";
 
 async function allUsers(): Promise<QueryUser[]> {
-  const dbUsers = await db.query.users.findMany();
+  const dbUsers = await db.query.user.findMany();
   return dbUsers.map((u) => ({ uuid: u.id, role: u.role }));
 }
 
-async function add(user: User) {
-  await db.insert(users).values({
-    id: user.getUuid(),
-    role: user.getRole(),
+async function add(newUser: User) {
+  await db.insert(user).values({
+    id: newUser.getUuid(),
+    role: newUser.getRole(),
   });
 }
 
 async function findById(id: string) {
-  const dbUser = await db.query.users.findFirst({
+  const dbUser = await db.query.user.findFirst({
     where: { id },
   });
 
@@ -31,7 +31,7 @@ async function findById(id: string) {
 
 async function updateById(id: string, updateFn: (u: User) => User) {
   await db.transaction(async (tx) => {
-    const found = await tx.query.users.findFirst({
+    const found = await tx.query.user.findFirst({
       where: { id },
     });
 
@@ -42,14 +42,14 @@ async function updateById(id: string, updateFn: (u: User) => User) {
     const domainUser = makeUser({ uuid: found.id, role: found.role });
     const domainUserUpdated = updateFn(domainUser);
 
-    await tx.update(users).set({
+    await tx.update(user).set({
       role: domainUserUpdated.getRole(),
     });
   });
 }
 
 async function deleteById(id: string) {
-  await db.delete(users).where(eq(users.id, id));
+  await db.delete(user).where(eq(user.id, id));
 }
 
 export function makeUserRepository() {

@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { db } from "~/db/db";
 import { Id } from "~/domain/id";
 
-import { tasks, users } from "~/db/schema";
+import { tasks, users } from "~/db/schema/others";
 
 type User = typeof users.$inferInsert;
 type Task = typeof tasks.$inferInsert;

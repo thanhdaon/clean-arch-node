@@ -8,6 +8,7 @@ export const env = createEnv({
     OTLP_TRACE_EXPORTER_URL: z.string().url(),
     JWT_SECRET: z.string(),
     BETTER_AUTH_SECRET: z.string(),
+    BETTER_AUTH_URL: z.string().url(),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,

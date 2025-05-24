@@ -1,5 +1,6 @@
 import { createRoute } from "@hono/zod-openapi";
 import type { App } from "~/app";
+import { auth } from "~/common/auth";
 import { jsonContent } from "~/ports/http/openapi-json";
 import {
   createDataSchema,
@@ -22,6 +23,9 @@ export const route = createRoute({
 
 export function makeHandler(app: App): AppRouteHandler<typeof route> {
   return async (c) => {
+    const session = await auth.api.getSession({ headers: c.req.raw.headers });
+    console.log({ session });
+
     const users = await app.query.allUsers();
     return responseOk(c, users);
   };

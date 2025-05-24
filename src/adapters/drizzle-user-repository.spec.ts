@@ -2,7 +2,7 @@ import { eq, inArray } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { makeUserRepository } from "~/adapters/drizzle-user-repository";
 import { db } from "~/db/db";
-import { users } from "~/db/schema";
+import { users } from "~/db/schema/others";
 import { Id } from "~/domain/id";
 import { makeUser } from "~/domain/user";
 
@@ -132,6 +132,8 @@ describe("deleteById", () => {
   });
 
   it("should not throw error when deleting non-existent user", async () => {
-    await expect(userRepository.deleteById("non-existent-id")).resolves.not.toThrow();
+    await expect(
+      userRepository.deleteById("non-existent-id")
+    ).resolves.not.toThrow();
   });
 });

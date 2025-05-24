@@ -1,23 +1,23 @@
 import { db } from "~/db/db";
-import { tasks } from "~/db/schema";
+import { task } from "~/db/schema/others";
 import { makeTask } from "~/domain/task";
 import type { Task } from "~/domain/task/task";
 
-async function add(task: Task) {
-  await db.insert(tasks).values({
-    id: task.getUuid(),
-    title: task.getTitle(),
-    status: task.getStatus(),
-    createdBy: task.getCreatedBy(),
-    assignedTo: task.getAssignedTo(),
-    createdAt: task.getCreatedAt(),
-    updatedAt: task.getUpdatedAt(),
+async function add(newTask: Task) {
+  await db.insert(task).values({
+    id: newTask.getUuid(),
+    title: newTask.getTitle(),
+    status: newTask.getStatus(),
+    createdBy: newTask.getCreatedBy(),
+    assignedTo: newTask.getAssignedTo(),
+    createdAt: newTask.getCreatedAt(),
+    updatedAt: newTask.getUpdatedAt(),
   });
 }
 
 async function updateById(id: string, updateFn: (u: Task) => Task) {
   await db.transaction(async (tx) => {
-    const found = await tx.query.tasks.findFirst({
+    const found = await tx.query.task.findFirst({
       where: { id },
     });
 
@@ -36,7 +36,7 @@ async function updateById(id: string, updateFn: (u: Task) => Task) {
     });
     const domainTaskUpdated = updateFn(domainTask);
 
-    await tx.update(tasks).set({
+    await tx.update(task).set({
       title: domainTaskUpdated.getTitle(),
       status: domainTaskUpdated.getStatus(),
       assignedTo: domainTaskUpdated.getAssignedTo(),
