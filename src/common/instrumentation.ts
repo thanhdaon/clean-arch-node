@@ -1,6 +1,6 @@
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { MySQL2Instrumentation } from "@opentelemetry/instrumentation-mysql2";
-import { Resource } from "@opentelemetry/resources";
+import { resourceFromAttributes } from "@opentelemetry/resources";
 import { NodeSDK } from "@opentelemetry/sdk-node";
 import {
   ATTR_SERVICE_NAME,
@@ -12,7 +12,7 @@ const otlpExporter = new OTLPTraceExporter({
   url: env.OTLP_TRACE_EXPORTER_URL,
 });
 
-const resource = new Resource({
+const resource = resourceFromAttributes({
   [ATTR_SERVICE_NAME]: env.SERVICE_NAME,
   [ATTR_SERVICE_VERSION]: "0.0.1",
 });
