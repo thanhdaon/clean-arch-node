@@ -2,7 +2,8 @@ import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { makeTaskRepository } from "~/adapters/drizzle-task-repository";
 import { db } from "~/db/db";
-import { tasks, users } from "~/db/schema/others";
+import { user } from "~/db/schema/auth";
+import { task } from "~/db/schema/others";
 import { Id } from "~/domain/id";
 import { makeTask } from "~/domain/task";
 
@@ -11,8 +12,17 @@ const taskRepository = makeTaskRepository();
 describe("add", () => {
   it("should add a new task", async () => {
     const [{ id }] = await db
-      .insert(users)
-      .values({ id: Id.newId(), role: "employee" })
+      .insert(user)
+      .values({
+        role: "employee",
+        name: "test-name",
+        email: "test-email1@gmail.com",
+        emailVerified: false,
+        emailVerifiedAt: null,
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
       .$returningId();
 
     const task = makeTask({
@@ -25,7 +35,7 @@ describe("add", () => {
 
     await taskRepository.add(task);
 
-    const dbTask = await db.query.tasks.findFirst({
+    const dbTask = await db.query.task.findFirst({
       where: { id: task.getUuid() },
     });
 
@@ -41,19 +51,28 @@ describe("add", () => {
     expect(dbTask.createdAt).toEqual(task.getCreatedAt());
     expect(dbTask.updatedAt).toEqual(task.getUpdatedAt());
 
-    await db.delete(users).where(eq(users.id, id));
+    await db.delete(user).where(eq(user.id, id));
   });
 });
 
 describe("updateById function", () => {
   it("should update task by id", async () => {
     const [{ id: creatorId }] = await db
-      .insert(users)
-      .values({ id: Id.newId(), role: "employee" })
+      .insert(user)
+      .values({
+        role: "employee",
+        name: "test-name",
+        email: "test-email5@gmail.com",
+        emailVerified: false,
+        emailVerifiedAt: null,
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
       .$returningId();
 
     const [{ id: taskId }] = await db
-      .insert(tasks)
+      .insert(task)
       .values({
         id: Id.newId(),
         title: "Initial Task",
@@ -67,10 +86,9 @@ describe("updateById function", () => {
     await taskRepository.updateById(taskId, (task) => {
       task.changeTitle("Updated Task");
       task.changeStatue("done");
-      return task;
     });
 
-    const updatedTask = await db.query.tasks.findFirst({
+    const updatedTask = await db.query.task.findFirst({
       where: { id: taskId },
     });
 
@@ -80,8 +98,8 @@ describe("updateById function", () => {
     expect(updatedTask.title).toBe("Updated Task");
     expect(updatedTask.status).toBe("done");
 
-    await db.delete(tasks).where(eq(tasks.id, taskId));
-    await db.delete(users).where(eq(users.id, creatorId));
+    await db.delete(task).where(eq(task.id, taskId));
+    await db.delete(user).where(eq(user.id, creatorId));
   });
 
   it("should throw an error if updating a non-existent task", async () => {

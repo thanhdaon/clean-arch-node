@@ -5,14 +5,18 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
+import { Id } from "~/domain/id";
 
 export const user = mysqlTable("user", {
-  id: varchar("id", { length: 36 }).primaryKey(),
+  id: varchar("id", { length: 36 })
+    .primaryKey()
+    .$defaultFn(() => Id.newId()),
   name: text("name").notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   emailVerified: boolean("email_verified")
     .$defaultFn(() => false)
     .notNull(),
+  emailVerifiedAt: timestamp("email_verified_at"),
   image: text("image"),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())

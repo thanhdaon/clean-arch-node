@@ -15,7 +15,7 @@ async function add(newTask: Task) {
   });
 }
 
-async function updateById(id: string, updateFn: (u: Task) => Task) {
+async function updateById(id: string, updateFn: (u: Task) => void) {
   await db.transaction(async (tx) => {
     const found = await tx.query.task.findFirst({
       where: { id },
@@ -34,13 +34,14 @@ async function updateById(id: string, updateFn: (u: Task) => Task) {
       createdAt: found.createdAt,
       updatedAt: found.updatedAt ? found.updatedAt : undefined,
     });
-    const domainTaskUpdated = updateFn(domainTask);
+    
+    await updateFn(domainTask);
 
     await tx.update(task).set({
-      title: domainTaskUpdated.getTitle(),
-      status: domainTaskUpdated.getStatus(),
-      assignedTo: domainTaskUpdated.getAssignedTo(),
-      updatedAt: domainTaskUpdated.getUpdatedAt(),
+      title: domainTask.getTitle(),
+      status: domainTask.getStatus(),
+      assignedTo: domainTask.getAssignedTo(),
+      updatedAt: domainTask.getUpdatedAt(),
     });
   });
 }
