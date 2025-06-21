@@ -67,6 +67,7 @@ async function updateById(id: string, updateFn: (u: User) => User) {
       createdAt: found.createdAt,
       updatedAt: found.updatedAt,
     });
+    
     const domainUserUpdated = updateFn(domainUser);
 
     await tx.update(user).set({

@@ -1,6 +1,6 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import type { App } from "~/app";
-import { log } from "~/common/logger";
+import { auth } from "~/common/auth";
 import { getUserFromCtx } from "~/ports/http/auth";
 import { jsonContent } from "~/ports/http/openapi-json";
 import { ErrorSchema, MessageSchema } from "~/ports/http/openapi-schema";
@@ -47,6 +47,7 @@ export function makeHandler(app: App): AppRouteHandler<typeof route> {
     if (assigner === undefined) {
       return responseForbidden(c);
     }
+
     const params = c.req.valid("param");
 
     await app.command.assignTask({

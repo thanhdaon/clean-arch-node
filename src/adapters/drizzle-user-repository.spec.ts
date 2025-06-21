@@ -7,11 +7,9 @@ import { user } from "~/db/schema/auth";
 import { makeUser } from "~/domain/user";
 import type { UserRole } from "~/domain/user/user";
 
-type InsertUser = typeof user.$inferInsert;
-
 const userRepository = makeUserRepository();
 
-function mockUser({ role = "employee" }: { role?: UserRole } = {}): InsertUser {
+function mockUser({ role = "employee" }: { role?: UserRole } = {}) {
   return {
     role,
     name: faker.person.fullName(),
@@ -47,16 +45,8 @@ describe("allUsers", () => {
 
 describe("add", () => {
   it("should add a new user", async () => {
-    const newUser = makeUser({
-      role: "employee",
-      name: "test-name",
-      email: "test-email",
-      emailVerified: false,
-      emailVerifiedAt: null,
-      image: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
+    const newUser = makeUser(mockUser({ role: "employee" }));
+
     await userRepository.add(newUser);
 
     const dbUser = await db.query.user.findFirst({

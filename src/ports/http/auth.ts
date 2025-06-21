@@ -5,7 +5,7 @@ import { makeUser } from "~/domain/user";
 import type { User } from "~/domain/user/user";
 import type { AppContext } from "~/ports/http/types";
 
-function _getUserFromCtx(c: AppContext): User | undefined {
+function userFromCtx(c: AppContext): User | undefined {
   const token = c.req.header("Authorization")?.split(" ")[1];
   if (token === "" || token === undefined) {
     return undefined;
@@ -19,4 +19,4 @@ function _getUserFromCtx(c: AppContext): User | undefined {
   return makeUser({ uuid: decoded.userUuid, role: decoded.userRole });
 }
 
-export const getUserFromCtx = withTrace(_getUserFromCtx, "user-from-ctx");
+export const getUserFromCtx = withTrace(userFromCtx, "user-from-ctx");

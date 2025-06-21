@@ -7,6 +7,9 @@ import {
 } from "@opentelemetry/semantic-conventions";
 import type { MiddlewareHandler } from "hono";
 import { pinoLogger } from "hono-pino";
+import { auth } from "~/common/auth";
+import { UNAUTHORIZED } from "~/ports/http/status-codes";
+import { HttpStatusPhrases } from "~/ports/http/status-phrases";
 
 export const instrumentation: MiddlewareHandler = async (c, next) => {
   const tracer = trace.getTracer("");
@@ -61,3 +64,13 @@ export const logger: MiddlewareHandler = pinoLogger({
     }),
   },
 });
+
+export const authMiddleware: MiddlewareHandler = async (c, next) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers });
+  if (session == null) {
+    return c.json({ error: HttpStatusPhrases.UNAUTHORIZED }, UNAUTHORIZED);
+  }
+  c.set("session", session);
+  c.set("user", session.user);
+  await next();
+};

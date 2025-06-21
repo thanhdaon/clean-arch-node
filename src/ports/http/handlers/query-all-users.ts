@@ -1,6 +1,5 @@
 import { createRoute } from "@hono/zod-openapi";
 import type { App } from "~/app";
-import { auth } from "~/common/auth";
 import { jsonContent } from "~/ports/http/openapi-json";
 import {
   createDataSchema,
@@ -10,8 +9,10 @@ import {
 import { responseOk } from "~/ports/http/response";
 import { BAD_REQUEST, OK } from "~/ports/http/status-codes";
 import type { AppRouteHandler } from "~/ports/http/types";
+import { authMiddleware } from "~/ports/http/middlewares";
 
 export const route = createRoute({
+  middleware: [authMiddleware],
   tags: ["users"],
   method: "get",
   path: "/users",
@@ -23,9 +24,6 @@ export const route = createRoute({
 
 export function makeHandler(app: App): AppRouteHandler<typeof route> {
   return async (c) => {
-    const session = await auth.api.getSession({ headers: c.req.raw.headers });
-    console.log({ session });
-
     const users = await app.query.allUsers();
     return responseOk(c, users);
   };

@@ -1,29 +1,31 @@
 import { faker } from "@faker-js/faker";
 import { db } from "~/db/db";
 import { Id } from "~/domain/id";
+import { user } from "~/db/schema/auth";
+import { task } from "~/db/schema/others";
 
-import { tasks, users } from "~/db/schema/others";
-
-type User = typeof users.$inferInsert;
-type Task = typeof tasks.$inferInsert;
+type User = typeof user.$inferInsert;
+type Task = typeof task.$inferInsert;
 
 async function main() {
-  await db.delete(tasks);
-  await db.delete(users);
+  await db.delete(task);
+  await db.delete(user);
 
   const insertUsers = await db
-    .insert(users)
+    .insert(user)
     .values(generateUsers(10))
     .$returningId();
 
   const insertUserIDs = insertUsers.map((user) => user.id);
 
-  await db.insert(tasks).values(generateTasks(100, insertUserIDs));
+  await db.insert(task).values(generateTasks(100, insertUserIDs));
 }
 
 function generateUsers(count: number): User[] {
   return Array.from({ length: count }, () => ({
     id: Id.newId(),
+    name: faker.person.fullName(),
+    email: faker.internet.email(),
     role: faker.helpers.arrayElement(["employee", "employer"]),
   }));
 }
