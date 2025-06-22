@@ -7,8 +7,8 @@ import { makeCommandAddUser } from "~/app/command/add-user";
 import { makeCommandCreateTask } from "~/app/command/create-task";
 import { makeQueryAllUsers } from "~/app/query/all-users";
 import { log } from "~/common/logger";
-import { runHttpServer } from "~/ports/http/server";
 import { makeCommandAssignTask } from "./app/command/assign-task";
+import { startOrpcServer } from "~/ports/orpc/server";
 
 async function main() {
   const userRepository = makeUserRepository();
@@ -28,7 +28,7 @@ async function main() {
     },
   };
 
-  runHttpServer(app);
+  startOrpcServer(app);
 }
 
 main().catch((error) => {

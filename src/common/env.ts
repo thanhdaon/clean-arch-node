@@ -9,6 +9,7 @@ export const env = createEnv({
     JWT_SECRET: z.string(),
     BETTER_AUTH_SECRET: z.string(),
     BETTER_AUTH_URL: z.string().url(),
+    PORT: z.coerce.number(),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,

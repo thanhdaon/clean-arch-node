@@ -3,6 +3,7 @@ import { db } from "~/db/db";
 import { Id } from "~/domain/id";
 import { user } from "~/db/schema/auth";
 import { task } from "~/db/schema/others";
+import { log } from "~/common/logger";
 
 type User = typeof user.$inferInsert;
 type Task = typeof task.$inferInsert;
@@ -50,10 +51,10 @@ function generateTasks(count: number, userIDs: string[]): Task[] {
 
 main()
   .then(() => {
-    console.log("🌱 Seed success! ✨");
+    log.info("🌱 Seed success! ✨");
   })
   .catch((error) => {
-    console.error("🚫 Seed failed:", error);
+    log.error("🚫 Seed failed:", error);
   })
   .finally(() => {
     process.exit(0);

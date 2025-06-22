@@ -7,6 +7,7 @@ import {
   ATTR_SERVICE_VERSION,
 } from "@opentelemetry/semantic-conventions";
 import { env } from "~/common/env";
+import { log } from "~/common/logger";
 
 const otlpExporter = new OTLPTraceExporter({
   url: env.OTLP_TRACE_EXPORTER_URL,
@@ -25,4 +26,4 @@ const sdk = new NodeSDK({
 
 sdk.start();
 
-console.log("*** Instrumentation started ***");
+log.info("Instrumentation started");
