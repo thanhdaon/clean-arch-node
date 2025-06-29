@@ -25,27 +25,27 @@
     "@orpc/server": "^1.5.2",
     "@orpc/zod": "^1.5.2",
     "@paralleldrive/cuid2": "^2.2.2",
-    "@scalar/hono-api-reference": "^0.9.5",
+    "@scalar/hono-api-reference": "^0.9.7",
     "@t3-oss/env-core": "^0.13.8",
-    "better-auth": "^1.2.9",
+    "better-auth": "^1.2.12",
     "drizzle-orm": "1.0.0-beta.1-c0277c0",
-    "hono": "^4.8.2",
+    "hono": "^4.8.3",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mysql2": "^3.14.1",
     "pino": "^9.7.0",
     "pino-pretty": "^13.0.0",
-    "zod": "^3.25.64"
+    "zod": "^3.25.67"
   },
   "devDependencies": {
-    "@better-auth/cli": "^1.2.9",
+    "@better-auth/cli": "^1.2.12",
     "@faker-js/faker": "^9.8.0",
-    "@types/jsonwebtoken": "^9.0.9",
-    "@types/lodash": "^4.17.17",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/lodash": "^4.17.19",
     "drizzle-kit": "1.0.0-beta.1-c0277c0",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
-    "vite": "^6.3.5",
-    "vitest": "^3.2.3"
+    "vite": "^7.0.0",
+    "vitest": "^3.2.4"
   }
 }
