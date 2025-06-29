@@ -17,7 +17,10 @@ async function main() {
   const app: App = {
     command: {
       addUser: makeCommandAddUser({ users: userRepository }),
-      createTask: makeCommandCreateTask({ tasks: taskRepository }),
+      createTask: makeCommandCreateTask({
+        tasks: taskRepository,
+        users: userRepository,
+      }),
       assignTask: makeCommandAssignTask({
         users: userRepository,
         tasks: taskRepository,

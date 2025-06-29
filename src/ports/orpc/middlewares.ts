@@ -1,6 +1,7 @@
 import { context as otelContext, SpanKind, trace } from "@opentelemetry/api";
-import { os } from "@orpc/server";
+import { ORPCError, os } from "@orpc/server";
 import { log } from "~/common/logger";
+import { BadRequestError, NotFoundError } from "~/domain/error";
 
 export const instrumentation = os.middleware(
   async ({ context, next, path }) => {
@@ -41,4 +42,20 @@ export const instrumentation = os.middleware(
 export const logger = os.middleware(({ context, next, path }, input) => {
   log.info({ path, context, input }, "new request");
   return next();
+});
+
+export const errorHandler = os.middleware(async ({ next }) => {
+  try {
+    return await next();
+  } catch (error: unknown) {
+    if (error instanceof BadRequestError) {
+      throw new ORPCError("BAD_REQUEST", { message: error.message });
+    }
+  
+    if (error instanceof NotFoundError) {
+      throw new ORPCError("NOT_FOUND", { message: error.message });
+    }
+
+    throw new ORPCError("UNKNOWN_ERROR", { message: String(error) });
+  }
 });
